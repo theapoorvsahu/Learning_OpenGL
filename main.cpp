@@ -14,12 +14,15 @@
 using namespace std;
 
 const GLint WIDTH = 800, HEIGHT = 600;
+const float toRadians = 3.14159265 / 180.0f;
 
 GLuint VAO, VBO, shader, uniformModel;
 bool direction = true;
 float triOffset = 0.0f;
 float triMaxoffset = 0.7f;
 float triIncrement = 0.0005f;
+
+float curAngle = 0.0f;
 
 static const char* vShader = "                                                \n\
 #version 330                                                                  \n\
@@ -206,16 +209,25 @@ int main()
 			direction = !direction;
 		}
 
+		curAngle += 0.01f;
+		if (curAngle >= 360)
+		{
+			curAngle -= 360;
+		}
+
 		// Clear window
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glUseProgram(shader);
 
-		glm::mat4 model(1.0f);													// Initialize Matrix 4x4 (by default set as identity matrix) as model
-		// model = glm::translate(model, glm::vec3(triOffset, 0.0f, 0.0f));		// Altering the X value
-		model = glm::translate(model, glm::vec3(triOffset, triOffset, 0.0f));		// Altering the X and Y value, So Triangle will be moving in a Diagonal direction
+		glm::mat4 model(1.0f);														// Initialize Matrix 4x4 (by default set as identity matrix) as model
 		
+		// Uncomment if want to see how translate and rotate works together
+		//model = glm::translate(model, glm::vec3(triOffset, 0.0f, 0.0f));			// Altering the X value
+		//model = glm::translate(model, glm::vec3(triOffset, triOffset, 0.0f));		// Altering the X and Y value, So Triangle will be moving in a Diagonal direction
+		model = glm::rotate(model, curAngle * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
 		glBindVertexArray(VAO);
@@ -226,7 +238,6 @@ int main()
 
 		glfwSwapBuffers(mainWindow);
 	}
-
 
 	return 0;
 }
