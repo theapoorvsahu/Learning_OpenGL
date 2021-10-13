@@ -5,7 +5,6 @@
 #include <glm/gtc/matrix_transform.hpp>						// For Matrix Transformation
 #include <glm/gtc/type_ptr.hpp>								// Using these to pass the values to shaders
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <cmath>
@@ -16,7 +15,8 @@ using namespace std;
 const GLint WIDTH = 800, HEIGHT = 600;
 const float toRadians = 3.14159265 / 180.0f;
 
-GLuint VAO, VBO, IBO, shader, uniformModel;
+GLuint VAO, VBO, IBO, shader, uniformModel, uniformProjection;
+
 bool direction = true;
 float triOffset = 0.0f;
 float triMaxoffset = 0.7f;
@@ -38,15 +38,13 @@ layout (location = 0) in vec3 pos;											  \n\
 out vec4 vCol;                                                                \n\
                                                                               \n\
 uniform mat4 model;                                                           \n\
+uniform mat4 projection;                                                      \n\
                                                                               \n\
 void main()                                                                   \n\
 {                                                                             \n\
-	gl_Position = model * vec4(pos, 1.0);									  \n\
-    //gl_Position = model * vec4(pos.x, pos.y, pos.z, 1.0);					  \n\
-	//gl_Position = model * vec4(0.4 * pos.x, 0.4 * pos.y, pos.z, 1.0);		  \n\
+	gl_Position = projection * model * vec4(pos, 1.0);						  \n\
                                                                               \n\
     vCol = vec4(clamp(pos, 0.0f, 1.0f), 1.0f);                                \n\
-	//vCol = vec4(0.2f, 0.6f, 0.22f, 1.0f);								      \n\
 }";
 
 // Fragment Shader
@@ -163,6 +161,7 @@ void CompileShaders()
 	}
 
 	uniformModel = glGetUniformLocation(shader, "model");
+	uniformProjection = glGetUniformLocation(shader, "projection");
 
 }
 
@@ -221,6 +220,8 @@ int main()
 	CreateTriangle();
 	CompileShaders();
 
+	glm::mat4 projection = glm::perspective(45.0f, (GLfloat)bufferWidth / (GLfloat)bufferHeight, 0.1f, 100.0f);
+
 	// Loop until window closed
 	while (!glfwWindowShouldClose(mainWindow))
 	{
@@ -271,11 +272,13 @@ int main()
 
 		glm::mat4 model(1.0f);																// Initialize Matrix 4x4 (by default set as identity matrix) as model
 		
-		//model = glm::translate(model, glm::vec3(triOffset, 0.0f, 0.0f));					// Altering the X value
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
 		model = glm::rotate(model, curAngle * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
 
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+
 
 		glBindVertexArray(VAO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
