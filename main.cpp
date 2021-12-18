@@ -1,9 +1,9 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include <glm/glm.hpp>										// Basic GLM Header File
-#include <glm/gtc/matrix_transform.hpp>						// For Matrix Transformation
-#include <glm/gtc/type_ptr.hpp>								// Using these to pass the values to shaders
+#include <glm/glm.hpp>							// Basic GLM Header File
+#include <glm/gtc/matrix_transform.hpp>			// For Matrix Transformation
+#include <glm/gtc/type_ptr.hpp>					// Using these to pass the values to shaders
 
 #include <stdio.h>
 #include <stdlib.h>
