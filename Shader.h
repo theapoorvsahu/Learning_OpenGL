@@ -5,7 +5,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <GL/glew.h>
+#include <GL\glew.h>
 
 class Shader
 {
@@ -17,9 +17,9 @@ public:
 
 	std::string ReadFile(const char* fileLocation);
 
-	GLuint GetViewLocation();
 	GLuint GetProjectionLocation();
 	GLuint GetModelLocation();
+	GLuint GetViewLocation();
 
 	void UseShader();
 	void ClearShader();
@@ -28,7 +28,7 @@ public:
 
 private:
 	GLuint shaderID, uniformProjection, uniformModel, uniformView;
-	
+
 	void CompileShader(const char* vertexCode, const char* fragmentCode);
 	void AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderType);
 };

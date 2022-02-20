@@ -50,7 +50,7 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 
 	if (!shaderID)
 	{
-		printf("Failed to create shader\n");
+		printf("Error creating shader program!\n");
 		return;
 	}
 
@@ -78,10 +78,42 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 		return;
 	}
 
-	uniformModel = glGetUniformLocation(shaderID, "model");
 	uniformProjection = glGetUniformLocation(shaderID, "projection");
+	uniformModel = glGetUniformLocation(shaderID, "model");
 	uniformView = glGetUniformLocation(shaderID, "view");
 }
+
+GLuint Shader::GetProjectionLocation()
+{
+	return uniformProjection;
+}
+GLuint Shader::GetModelLocation()
+{
+	return uniformModel;
+}
+GLuint Shader::GetViewLocation()
+{
+	return uniformView;
+}
+
+void Shader::UseShader()
+{
+	glUseProgram(shaderID);
+}
+
+void Shader::ClearShader()
+{
+	if (shaderID != 0)
+	{
+		glDeleteProgram(shaderID);
+		shaderID = 0;
+	}
+
+	uniformModel = 0;
+	uniformProjection = 0;
+	uniformView = 0;
+}
+
 
 void Shader::AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderType)
 {
@@ -102,44 +134,12 @@ void Shader::AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderT
 	glGetShaderiv(theShader, GL_COMPILE_STATUS, &result);
 	if (!result)
 	{
-		glGetShaderInfoLog(theShader, 1024, NULL, eLog);
-		fprintf(stderr, "Error compiling the %d shader: '%s'\n", shaderType, eLog);
+		glGetShaderInfoLog(theShader, sizeof(eLog), NULL, eLog);
+		printf("Error compiling the %d shader: '%s'\n", shaderType, eLog);
 		return;
 	}
 
 	glAttachShader(theProgram, theShader);
-}
-
-GLuint Shader::GetViewLocation()
-{
-	return uniformView;
-}
-
-GLuint Shader::GetProjectionLocation()
-{
-	return uniformProjection;
-}
-
-GLuint Shader::GetModelLocation()
-{
-	return uniformModel;
-}
-
-void Shader::UseShader()
-{
-	glUseProgram(shaderID);
-}
-
-void Shader::ClearShader()
-{
-	if (shaderID != 0)
-	{
-		glDeleteProgram(shaderID);
-		shaderID = 0;
-	}
-	
-	uniformModel = 0;
-	uniformProjection = 0;
 }
 
 Shader::~Shader()

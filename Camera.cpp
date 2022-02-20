@@ -2,7 +2,10 @@
 
 Camera::Camera()
 {
-
+	position = glm::vec3(0.0f, 0.0f, 0.0f);
+	worldUp = glm::vec3(0.0f, 0.0f, 0.0f);
+	yaw = 0.0f;
+	pitch = 0.0f;
 }
 
 Camera::Camera(glm::vec3 startPosition, glm::vec3 startUp, GLfloat startYaw, GLfloat startPitch, GLfloat startMoveSpeed, GLfloat startTurnSpeed)

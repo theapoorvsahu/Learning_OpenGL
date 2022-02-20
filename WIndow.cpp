@@ -28,7 +28,6 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 
 int Window::Initialize()
 {
-	// Initialise GLFW
 	if (!glfwInit())
 	{
 		printf("GLFW initialisation failed!");
@@ -36,17 +35,12 @@ int Window::Initialize()
 		return 1;
 	}
 
-	// Setup GLFW window properties
-	// OpenGL version
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	// Core Profile
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	// Allow Forward Compatbility
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-	// Create the window
-	mainWindow = glfwCreateWindow(width, height, "Test Window", NULL, NULL);
+	mainWindow = glfwCreateWindow(width, height, "OpenGL Window", NULL, NULL);
 	if (!mainWindow)
 	{
 		printf("GLFW window creation failed!");
@@ -55,15 +49,11 @@ int Window::Initialize()
 	}
 
 	glfwGetFramebufferSize(mainWindow, &bufferWidth, &bufferHeight);
-
-	// Set context for GLEW to use
 	glfwMakeContextCurrent(mainWindow);
 
-	// Handle Keys and Mouse Inputs
 	createCallbacks();
 	glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	// Allow modern extension features
 	glewExperimental = GL_TRUE;
 
 	if (glewInit() != GLEW_OK)
@@ -74,16 +64,15 @@ int Window::Initialize()
 		return 1;
 	}
 
-	// Enabling Depth so that the colors present in the back of Trianglular Pyramid will be visible when rotated.
 	glEnable(GL_DEPTH_TEST);
-
-	// Setup Viewport size
 	glViewport(0, 0, bufferWidth, bufferHeight);
 
-	glfwSetWindowUserPointer(mainWindow, this); // to let the callback know the class/object which is calling
+	// to let the callback know the class/object which is calling
+	glfwSetWindowUserPointer(mainWindow, this);
 }
 
-void Window::createCallbacks()	// When a key is pressed on the main window, call the callback
+// When a key is pressed on the main window, call the callback
+void Window::createCallbacks()
 {
 	glfwSetKeyCallback(mainWindow, handleKeys);
 	glfwSetCursorPosCallback(mainWindow, handleMouse);
@@ -92,8 +81,9 @@ void Window::createCallbacks()	// When a key is pressed on the main window, call
 void Window::handleKeys(GLFWwindow* window, int key, int code, int action, int mode)
 {
 	Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)	// If we press(1) the ESC(256) key
+	
+	// If we press(1) the ESC(256) key
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
@@ -124,13 +114,15 @@ void Window::handleMouse(GLFWwindow* window, double xPos, double yPos)
 		theWindow->mouseFirstMoved = false;
 	}
 
+	// Switch for Inverted Y-Axis movement
 	theWindow->xChange = xPos - theWindow->lastX;
-	theWindow->yChange = theWindow->lastY - yPos;	// Switch for Inverted Y-Axis movement
+	theWindow->yChange = theWindow->lastY - yPos;
 
 	theWindow->lastX = xPos;
 	theWindow->lastY = yPos;
 
-	//printf("X = %.6f , Y = %.6f\n", theWindow->xChange, theWindow->yChange); // Uncomment for debug
+	// Uncomment for debug
+	//printf("X = %.6f , Y = %.6f\n", theWindow->xChange, theWindow->yChange);
 }
 
 GLfloat Window::getXChange()
@@ -139,6 +131,7 @@ GLfloat Window::getXChange()
 	xChange = 0.0f;
 	return theChange;
 }
+
 GLfloat Window::getYChange()
 {
 	GLfloat theChange = yChange;
